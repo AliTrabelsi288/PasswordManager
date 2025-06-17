@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import org.json.JSONObject;
 
 public class VaultIO {
-    public static JSONObject readVault(Path path) throws IOException {
+    protected static JSONObject readVault(Path path) throws IOException {
         if (!Files.exists(path)) {
             return new JSONObject();
         }
@@ -16,7 +16,15 @@ public class VaultIO {
         return new JSONObject(content);
     }
 
-    public static void writeVault(Path path, JSONObject vaultData) throws IOException {
+    protected static void writeVault(Path path, JSONObject vaultData) throws IOException {
         Files.write(path, vaultData.toString(4).getBytes());
     }
+    
+    protected static String masterPassword(Path path) throws IOException {
+    	String content = Files.readString(path);
+    	JSONObject vault = new JSONObject(content);
+    	return vault.getString("masterPassword");
+    }
+    
+    
 }

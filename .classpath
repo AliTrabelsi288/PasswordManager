@@ -6,10 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Ali/eclipse/java-2025-06/eclipse/plugins/json-20250517.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Ali/eclipse-workspace/PasswordManager/lib/json-20250517.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

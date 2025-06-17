@@ -15,15 +15,9 @@ public class Hash {
         this.keyLength = keyLength;
     }
 
-    protected String hashPassword(String password, String saltBase64) throws Exception {
-        byte[] salt = Base64.getDecoder().decode(saltBase64);
-
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-
-        byte[] hash = factory.generateSecret(spec).getEncoded();
-        return Base64.getEncoder().encodeToString(hash);
-    }
+    //protected Boolean comparePasswords(String storedPassword, String providedPassword) throws Exception {
+        
+    //}
 
     protected String hashAndSaltPassword(String password) throws Exception {
         SecureRandom random = new SecureRandom();

@@ -39,6 +39,15 @@ public class Main {
 		System.out.println("Please Enter the Password for Your Vault:");
 		String enterMasterPassword = sc.next();
 		
+		try{
+			String storedMasterPassword = VaultIO.masterPassword(path);
+			System.out.println(storedMasterPassword);
+		} 
+		catch (IOException e) {
+			System.out.println("ERROR : Vault Error");
+			e.printStackTrace();
+		}
+		
 ;	}
 	
 	private static void createPassword(Scanner sc, Path path) {
@@ -58,11 +67,8 @@ public class Main {
 		    System.out.println("Vault Created and Master Password Saved.");
 		} 
 		catch (Exception e) {
-			System.out.println("ERROR : Hashing Error");
+			System.out.println("ERROR : Hashing or Vault Error");
 			e.printStackTrace();
 		}
-		
-		
-		
 	}
 }
