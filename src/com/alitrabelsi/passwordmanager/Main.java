@@ -36,19 +36,31 @@ public class Main {
 	}
 	
 	private static void enterPassword(Scanner sc, Path path) {
+		Hash hasher = new Hash(65535, 256);
 		System.out.println("Please Enter the Password for Your Vault:");
-		String enterMasterPassword = sc.next();
+		String enteredMasterPassword = sc.next();
 		
 		try{
 			String storedMasterPassword = VaultIO.masterPassword(path);
-			System.out.println(storedMasterPassword);
+			Boolean passwordMatch = hasher.comparePasswords(storedMasterPassword, enteredMasterPassword);
+			
+			if(passwordMatch) {
+				System.out.println("Password Correct");
+			}
+			else {
+				System.out.println("Password Incorrect");
+			}
 		} 
 		catch (IOException e) {
 			System.out.println("ERROR : Vault Error");
 			e.printStackTrace();
+		} 
+		catch (Exception e) {
+			System.out.println("ERROR : Hashing Error");
+			e.printStackTrace();
 		}
 		
-;	}
+	}
 	
 	private static void createPassword(Scanner sc, Path path) {
 		Hash hasher = new Hash(65535, 256);

@@ -14,10 +14,25 @@ public class Hash {
         this.iterations = iterations;
         this.keyLength = keyLength;
     }
-
-    //protected Boolean comparePasswords(String storedPassword, String providedPassword) throws Exception {
+    
+    protected Boolean comparePasswords(String storedPassword, String providedPassword) throws Exception {
+        String[] split = storedPassword.split(":");
+        String base64salt = split[0];
+        String storedHash = split[1];
+        String regeneratedHash = hashPassword(providedPassword, base64salt);
         
-    //}
+        return regeneratedHash.equals(storedHash);
+    }
+
+    protected String hashPassword(String password, String saltBase64) throws Exception {
+        byte[] salt = Base64.getDecoder().decode(saltBase64);
+
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+
+        byte[] hash = factory.generateSecret(spec).getEncoded();
+        return Base64.getEncoder().encodeToString(hash);
+    }
 
     protected String hashAndSaltPassword(String password) throws Exception {
         SecureRandom random = new SecureRandom();
