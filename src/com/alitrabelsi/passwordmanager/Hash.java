@@ -6,6 +6,13 @@ import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
+/**
+ * Handles password hashing using PBKDF2 with HMAC SHA-256.
+ * Provides methods to hash and verify passwords securely.
+ * 
+ * @author Ali Trabelsi
+ * @version 1.0.0
+ */
 public class Hash {
     private final int iterations;
     private final int keyLength;

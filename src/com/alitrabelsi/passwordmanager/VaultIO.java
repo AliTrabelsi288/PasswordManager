@@ -3,9 +3,14 @@ package com.alitrabelsi.passwordmanager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.json.JSONObject;
 
+/**
+ * Handles writing to and retrieving data from the users vault.json file
+ * 
+ * @author Ali Trabeli
+ * @version 1.0.0
+ */
 public class VaultIO {
     protected static JSONObject readVault(Path path) throws IOException {
         if (!Files.exists(path)) {
