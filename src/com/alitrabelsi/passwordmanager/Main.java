@@ -56,7 +56,7 @@ public class Main {
 			
 			if(passwordMatch) {
 				System.out.println("Password Correct, Unlocking Vault ...");
-				vaultUnlocked(sc, path);
+				vaultUnlocked(sc, path, enteredMasterPassword);
 			}
 			else {
 				System.out.println("ERROR : Password Incorrect");
@@ -90,7 +90,7 @@ public class Main {
 
 		    VaultIO.writeVault(path, vault);
 		    System.out.println("Vault Created and Master Password Saved, Unlocking Vault ...");
-		    vaultUnlocked(sc, path);
+		    vaultUnlocked(sc, path, createMasterPassword);
 		} 
 		catch (Exception e) {
 			System.out.println("ERROR : Hashing or Vault Error");
@@ -98,7 +98,7 @@ public class Main {
 		}
 	}
 	
-	private static void vaultUnlocked(Scanner sc, Path path) throws IOException{
+	private static void vaultUnlocked(Scanner sc, Path path, String password) throws IOException{
 		final String options = "\n 1. View Saved Passwords\n 2. Add New Password\n 3. Delete Saved Password\n 4. Quit";
 		Boolean quit = false;
 		
@@ -108,10 +108,10 @@ public class Main {
 			
 			switch(choice) {
 				case "1":
-					viewPasswords(sc, path);
+					viewPasswords(sc, path, password);
 					break;
 				case "2":
-					addPassword(sc, path);
+					addPassword(sc, path, password);
 					break;
 				case "3":
 					deletePassword(sc, path);
@@ -133,8 +133,10 @@ public class Main {
 		
 	}
 	
-	private static void viewPasswords(Scanner sc, Path path) throws IOException {
+	private static void viewPasswords(Scanner sc, Path path, String password) throws IOException {
 		JSONObject vault = VaultIO.readVault(path);
+		Encryption decrypt = new Encryption(password);
+		
 		vault.remove("masterPassword");
 		int count = 1;
 		System.out.println("\nSaved Passwords: ");
@@ -143,27 +145,47 @@ public class Main {
 		   while (keys.hasNext()) {
 		       String key = keys.next();
 		       Object value = vault.get(key);
-		  
-		       System.out.println(count + ". " + "Account: " + key + ", Password: " + value);
-		       count++;
+		       
+		       try {
+		    	   String decryptedValue = decrypt.decrypt(value);
+		    	   
+		    	   System.out.println(count + ". " + "Account: " + key + ", Password: " + decryptedValue);
+			       count++;
+		       } 
+		       catch(Exception e) {
+					System.out.println("ERROR : Fatal Decryption or Vault Error");
+					e.printStackTrace();
+		       }
 		   }
 		   
 	}
 	
-	private static void addPassword(Scanner sc, Path path) throws IOException {
+	private static void addPassword(Scanner sc, Path path, String password) throws IOException {
 		JSONObject vault = VaultIO.readVault(path);
+		Encryption encrypt = new Encryption(password);
+		
 		System.out.println("\nAdd Password: ");
 		
 		System.out.println("Name of Account: ");
-		String name = sc.next();
+		String account = sc.next();
 		
-		System.out.println("Account Password: ");
-		String password = sc.next();
+		Console console = System.console();
+		char[] pwdArray = console.readPassword("Account Password: ");
+		String pass = new String(pwdArray);	
 		
-		vault.put(name, password);
-		VaultIO.writeVault(path, vault);
-		
-		System.out.println("\nNew Account Successfully Added");
+		try {
+			String encryptedPass = encrypt.encrypt(pass);
+			
+			vault.put(account, encryptedPass);
+			VaultIO.writeVault(path, vault);
+			
+			System.out.println("\nNew Account Successfully Added");
+		}
+		catch (Exception e) {
+			System.out.println("ERROR : Fatal Encryption or Vault Error");
+			e.printStackTrace();
+			
+		}
 		
 	}
 	
