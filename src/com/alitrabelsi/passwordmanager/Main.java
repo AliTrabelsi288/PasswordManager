@@ -1,5 +1,6 @@
 package com.alitrabelsi.passwordmanager;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.Scanner;
 import org.json.JSONObject;
@@ -45,8 +46,9 @@ public class Main {
 	
 	private static void enterPassword(Scanner sc, Path path) {
 		Hash hasher = new Hash(65535, 256);
-		System.out.println("Please Enter the Password for Your Vault:");
-		String enteredMasterPassword = sc.next();
+		Console console = System.console();
+		char[] pwdArray = console.readPassword("Enter password: ");
+		String enteredMasterPassword = new String(pwdArray);
 		
 		try{
 			String storedMasterPassword = VaultIO.masterPassword(path);
@@ -57,7 +59,7 @@ public class Main {
 				vaultUnlocked(sc, path);
 			}
 			else {
-				System.out.println("Password Incorrect");
+				System.out.println("ERROR : Password Incorrect");
 				System.exit(0);
 			}
 		} 
@@ -76,8 +78,9 @@ public class Main {
 		Hash hasher = new Hash(65535, 256);
 		String hashedCreateMasterPassword = null;
 		
-		System.out.println("Please Create a Password for Your Vault:");
-		String createMasterPassword = sc.next();	
+		Console console = System.console();
+		char[] pwdArray = console.readPassword("Create Pasword for Your Vault: ");
+		String createMasterPassword = new String(pwdArray);	
 		
 		try{
 			hashedCreateMasterPassword = hasher.hashAndSaltPassword(createMasterPassword);
@@ -106,16 +109,16 @@ public class Main {
 			switch(choice) {
 				case "1":
 					viewPasswords(sc, path);
-					continue;
+					break;
 				case "2":
 					addPassword(sc, path);
-					continue;
+					break;
 				case "3":
 					deletePassword(sc, path);
-					continue;
+					break;
 				case "4":
 					quit = true;
-					continue;
+					break;
 				default:
 					System.out.println("Choose from 1-4");
 					continue;
@@ -149,7 +152,6 @@ public class Main {
 	
 	private static void addPassword(Scanner sc, Path path) throws IOException {
 		JSONObject vault = VaultIO.readVault(path);
-		vault.remove("masterPassword");
 		System.out.println("\nAdd Password: ");
 		
 		System.out.println("Name of Account: ");
@@ -165,7 +167,36 @@ public class Main {
 		
 	}
 	
-	private static void deletePassword(Scanner sc, Path path) {
+	private static void deletePassword(Scanner sc, Path path) throws IOException {
+		JSONObject vault = VaultIO.readVault(path);
+		System.out.println("\nDelete Password");
+		
+		System.out.println("Name of Account: ");
+		String name = sc.next();
+		
+		System.out.println("Confirm Removal of Account: " + name + " ? (y/n)");
+		String confirm = sc.next();
+		
+		switch (confirm) {
+			case "y":
+				try {
+					Object check = vault.get(name);
+				}
+				catch (Exception e){
+					System.out.println("ERROR : Account Does Not Exist");
+					break;
+				}
+					
+				vault.remove(name);
+				VaultIO.writeVault(path, vault);
+				
+				System.out.println("Account Successfully Removed");
+				break;
+			default:
+				System.out.println("Delete Cancelled");
+				break;
+				
+		}	
 		
 	}
 }
