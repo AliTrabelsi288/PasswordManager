@@ -42,13 +42,15 @@ public class Main {
 		else {
 			createPassword(sc, path);
 		}
+		
+		sc.close();
 	}
 	
 	private static void enterPassword(Scanner sc, Path path) {
 		Hash hasher = new Hash(65535, 256);
 		Console console = System.console();
-		char[] pwdArray = console.readPassword("Enter password: ");
-		String enteredMasterPassword = new String(pwdArray);
+		char[] pwdArray = console.readPassword("Enter the Password for Your Vault: ");
+		String enteredMasterPassword = new String(pwdArray);	
 		
 		try{
 			String storedMasterPassword = VaultIO.masterPassword(path);
